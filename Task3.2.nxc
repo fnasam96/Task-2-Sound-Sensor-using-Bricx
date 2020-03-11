@@ -1,0 +1,49 @@
+#define THRESHOLD 25 //threshold value for black colour
+#define THRESHOLD2 65 //threshold value for clap on
+#define THRESHOLD3 75 //threshold value for clap off
+#define MIC SENSOR_2  //define 'MIC' to port 2
+
+int move_time, turn_time; //declare value of move_time & turn_time to int
+task main()
+{
+  move_time = Random(600); //move_time value is randomized between 0-600
+  turn_time = Random(1000); //turn_time value is randomized between 0-1000
+
+  SetSensorLight(IN_1);
+  SetSensorSound(IN_2);
+
+  while(true)
+  {
+     until (MIC > THRESHOLD2); //until it detects clap on will the next line be executed
+     Wait(300);
+     
+     while (MIC < THRESHOLD3){ //while loop will be executed as long as it doesnt detects clap off
+
+     if (Sensor(IN_1) < THRESHOLD) //if the light sensor detects black line
+     {
+     Off(OUT_BC); //stop for 0.3s
+     Wait(300);
+     OnRev(OUT_BC, 90);//reverse with 90% speed
+     Wait(move_time); //wait for random amount of move_time
+
+     if (Random(100) >=50) //if random value is between 50-100
+     {
+      OnFwd(OUT_B, 50); //rotate right with 50% speed
+      Wait(turn_time);  //wait for random amount of turn_time
+     }
+     else          //if random value between 0-49
+     {
+      OnFwd(OUT_C, 50); // rotate left with 50% speed
+      Wait(turn_time);  //wait for random amount of turn_time
+     }
+     }
+
+     else;  //if light sensor detects other than black
+     OnFwd(OUT_BC, 90);  //move forward with 90% speed
+
+  }//end of 2nd while loop
+  
+     Off(OUT_BC); //when it detects sound, the robot stops
+     Wait(300);
+}//end of 1st while loop
+}//end of main
